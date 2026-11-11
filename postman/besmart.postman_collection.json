@@ -1,0 +1,243 @@
+{
+  "info": {
+    "name": "BeasiswaSmart (BeSmart) REST API",
+    "_postman_id": "a7f2b5e4-91a8-4b92-8d14-2026besmart001",
+    "description": "Koleksi REST API Sistem Pendukung Keputusan Penentuan Penerima Beasiswa (Metode ARAS).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8000/api" },
+    { "key": "token", "value": "" },
+    { "key": "periodId", "value": "1" },
+    { "key": "applicantId", "value": "1" }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+  },
+  "item": [
+    {
+      "name": "System",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/health"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register Mahasiswa",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Mahasiswa Baru\",\n  \"email\": \"mahasiswa.baru@besmart.ac.id\",\n  \"password\": \"Mahasiswa123!\"\n}"
+            },
+            "url": "{{baseUrl}}/auth/register"
+          }
+        },
+        {
+          "name": "Login (Auto-save JWT Token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res && res.access_token) {",
+                  "  pm.collectionVariables.set('token', res.access_token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@besmart.ac.id\",\n  \"password\": \"Admin123!\"\n}"
+            },
+            "url": "{{baseUrl}}/auth/login"
+          }
+        },
+        {
+          "name": "Get Current User (/auth/me)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/auth/me"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users (Admin)",
+      "item": [
+        {
+          "name": "List Users",
+          "request": { "method": "GET", "url": "{{baseUrl}}/users" }
+        },
+        {
+          "name": "Create User",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Panitia Baru\",\n  \"email\": \"panitia.baru@besmart.ac.id\",\n  \"password\": \"Panitia123!\",\n  \"role\": \"panitia\"\n}"
+            },
+            "url": "{{baseUrl}}/users"
+          }
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Panitia Updated\"\n}"
+            },
+            "url": "{{baseUrl}}/users/2"
+          }
+        },
+        {
+          "name": "Delete User",
+          "request": { "method": "DELETE", "url": "{{baseUrl}}/users/99" }
+        }
+      ]
+    },
+    {
+      "name": "Periods",
+      "item": [
+        {
+          "name": "List Periods",
+          "request": { "method": "GET", "url": "{{baseUrl}}/periods" }
+        },
+        {
+          "name": "Create Period (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nama_periode\": \"Beasiswa Unggulan 2026/2027\",\n  \"kuota_penerima\": 5,\n  \"status\": \"buka\",\n  \"is_active\": true\n}"
+            },
+            "url": "{{baseUrl}}/periods"
+          }
+        },
+        {
+          "name": "Update Period Status (Admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"selesai\"\n}"
+            },
+            "url": "{{baseUrl}}/periods/{{periodId}}/status"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Criteria",
+      "item": [
+        {
+          "name": "List Criteria & Weight Indicator",
+          "request": { "method": "GET", "url": "{{baseUrl}}/criteria" }
+        },
+        {
+          "name": "Create Criterion (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"kode_kriteria\": \"C6\",\n  \"nama_kriteria\": \"Keaktifan Organisasi\",\n  \"tipe\": \"benefit\",\n  \"bobot\": 0.1,\n  \"keterangan\": \"Skor 0-100\"\n}"
+            },
+            "url": "{{baseUrl}}/criteria"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Applicants & Verification",
+      "item": [
+        {
+          "name": "List Applicants",
+          "request": { "method": "GET", "url": "{{baseUrl}}/applicants" }
+        },
+        {
+          "name": "Create Applicant (Mahasiswa)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"period_id\": 1,\n  \"nim\": \"2309999\",\n  \"nama_lengkap\": \"Mahasiswa Contoh\",\n  \"program_studi\": \"Teknik Informatika\"\n}"
+            },
+            "url": "{{baseUrl}}/applicants"
+          }
+        },
+        {
+          "name": "Save Applicant Scores",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"scores\": [\n    { \"criterion_id\": 1, \"nilai_input\": 3.85 },\n    { \"criterion_id\": 2, \"nilai_input\": 2.0 },\n    { \"criterion_id\": 3, \"nilai_input\": 3 },\n    { \"criterion_id\": 4, \"nilai_input\": 80 },\n    { \"criterion_id\": 5, \"nilai_input\": 6 }\n  ]\n}"
+            },
+            "url": "{{baseUrl}}/applicants/{{applicantId}}/scores"
+          }
+        },
+        {
+          "name": "Verify Applicant (Panitia / Admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status_verifikasi\": \"verified\"\n}"
+            },
+            "url": "{{baseUrl}}/applicants/{{applicantId}}/verify"
+          }
+        }
+      ]
+    },
+    {
+      "name": "ARAS Calculation & Results",
+      "item": [
+        {
+          "name": "Calculate ARAS (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"publish\": false\n}"
+            },
+            "url": "{{baseUrl}}/aras/calculate/{{periodId}}"
+          }
+        },
+        {
+          "name": "Get ARAS Results & Breakdown",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/aras/results/{{periodId}}"
+          }
+        }
+      ]
+    }
+  ]
+}
+

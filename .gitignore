@@ -1,0 +1,36 @@
+# Python & Virtual Environment
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+backend/.venv/
+venv/
+.venv/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Environment Variables
+.env
+backend/.env
+frontend/.env
+
+# Uploads & Runtime Artifacts
+backend/uploads/*
+!backend/uploads/.gitkeep
+*.db
+*.sqlite3
+
+# Node & Vite Build
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+npm-debug.log*
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
